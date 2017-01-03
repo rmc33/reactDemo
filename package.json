@@ -1,5 +1,5 @@
 {
-  "name": "palmify-ui",
+  "name": "reactDemo",
   "version": "1.0.0",
   "description": "A boilerplate for playing around with react, redux and react-router with the help of webpack.",
   "main": "index.js",
