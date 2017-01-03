@@ -227,7 +227,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps =  ({
   addFilterRequest: addFilterRequest,
-  removeFilterRequest, removeFilterRequest
+  removeFilterRequest: removeFilterRequest
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
