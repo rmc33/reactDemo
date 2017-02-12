@@ -4,7 +4,7 @@ import {DataFilter} from '../reducers/actions';
 export default class LineChart extends MyChart {
 
     
-     constructor(props) {
+    constructor(props) {
         super(props);
        this.props.options.series[0].point.events.select = this.onSelect.bind(this);
        this.props.options.series[0].point.events.unselect = this.onUnSelect.bind(this);

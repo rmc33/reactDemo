@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import {addFilterRequest, removeFilterRequest} from '../reducers/actions';
 import LineChart from './LineChart';
 import TreeMapChart from './TreeMapChart';
+var plainMod = require("./plainMod");
 
 var Treemap = require('highcharts/modules/treemap.src'),
 	
@@ -34,9 +35,6 @@ var Treemap = require('highcharts/modules/treemap.src'),
             title: "Monthly Average Temperature",
             container: 'linecontainer',
             options: {
-                onSelectCallBack: function(e) {
-                    console.log("called back", this, e);
-                },
                 title: {
                     text: '',
                     //x: -20 //center
@@ -93,9 +91,6 @@ var Treemap = require('highcharts/modules/treemap.src'),
             container: 'treecontainer',
             modules: [Treemap],
             options: {
-                onSelectCallBack: function(e) {
-                    console.log("called back", this, e);
-                },
                 serviceName: 'exampleService',
                 series: [{
                     type: "treemap",
@@ -191,8 +186,13 @@ class App extends React.Component {
   componentDidMount() {
     const { dispatch } = this.props;
     require(["testAMD"], function(a) {
-        console.log('did loaded async - please ignore this test :)', a);
+        console.log('did loaded async - please ignore this test :)');
+        a('#testWidth');
     });
+    console.log("startin gtest", plainMod);
+    plainMod.value();
+    plainMod.increment();
+    console.log("testMod=",plainMod.value());
   }
 
   componentWillReceiveProps(nextProps) {
@@ -206,6 +206,8 @@ class App extends React.Component {
 	    <Row className="show-grid" style={styles['show-grid']}>
 	      {this.renderCharts()}
 	    </Row>
+        <Button id="testJquery"/>
+        <div id="testWidth"/>
 	  </Grid>
 	  </div>;
   }
