@@ -7,20 +7,20 @@ import { doSearchRequest } from '../reducers/actions/searchActions';
 function SearchResults(props) {
 	  console.log('SearchResults props', props);
 	  if (props.data) {
-		  let results = props.data.map(function(result) {
-			return <div>{result}</div>
-		  });
 		  return (
 		    <div>
 		    	searching for {props.search_value}
 		    	<div>
 		    	results:
-		    	{results}
+		    	{
+		    	  props.data.map(function(result) {
+					return <div>{result}</div>
+				  })
+				}
 		    	</div>
 		    </div>
 		  );
 	  }
-	  
 	  return <div></div>;
 }
 
