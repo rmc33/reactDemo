@@ -24,8 +24,21 @@ function SearchResults(props) {
 	  return <div></div>;
 }
 
-//SearchViewRedux Class Component
-class SearchViewRedux extends React.Component {
+function mapStateToProps(state) {
+  console.log('map state to props', state);
+  return {
+    search_results: state.search.search_results
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return  {
+    doSearchRequest: (search_value) => dispatch(doSearchRequest(search_value))	  
+  }
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class SearchViewRedux extends React.Component {
 	
 	 constructor(props) {
 	    super(props);
@@ -40,7 +53,8 @@ class SearchViewRedux extends React.Component {
 		 this.refs.search_input.focus();
 	 }
 
-	 //life cycle event called when props are changed (we have mapped redux store changes to props below)
+	 //life cycle event called when props are changed 
+	 //we will receive props from mapped redux store changes
 	 componentWillReceiveProps(nextProps) {
 		 console.log('receiving props', nextProps);
 		 this.setState({search_results: nextProps.search_results});
@@ -55,7 +69,7 @@ class SearchViewRedux extends React.Component {
 	 
 	 //update search results, this will trigger a dom update for just the search results
 	 doSearch(event) {
-		 //we have mapped redux action to props below
+		 //we have mapped redux action to props
 		 this.props.doSearchRequest(this.state.search_value);
 	 }
 	
@@ -71,6 +85,7 @@ class SearchViewRedux extends React.Component {
 	 }
 }
 
+/**
 function mapStateToProps(state) {
     console.log('map state to props', state);
     return {
@@ -78,8 +93,11 @@ function mapStateToProps(state) {
     };
 }
 
-const mapDispatchToProps = ({
-  doSearchRequest: doSearchRequest,
-})
+function mapDispatchToProps(dispatch) {
+  return  {
+    doSearchRequest: (search_value) => dispatch(doSearchRequest(search_value))	  
+  }
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchViewRedux);
+**/

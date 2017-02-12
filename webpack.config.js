@@ -8,7 +8,7 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var config = {
   entry: [
     'webpack-dev-server/client?http://localhost:8080',
-    APP_DIR + '/index.js',
+    APP_DIR + '/testRedux.js'
   ],
   output: {
     path: BUILD_DIR + '/js',
@@ -41,7 +41,8 @@ var config = {
               require.resolve('babel-preset-es2015'),
               require.resolve('babel-preset-react'),
               require.resolve('babel-preset-stage-0')
-            ]
+            ],
+            plugins: ['transform-decorators-legacy' ]
           }
         },
         //{ 
@@ -82,7 +83,8 @@ var config = {
         {
           test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, 
           loader: 'url?limit=10000&mimetype=image/svg+xml'
-        }
+        },
+
      ]
   }
 };
