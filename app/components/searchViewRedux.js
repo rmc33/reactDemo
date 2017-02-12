@@ -5,23 +5,23 @@ import { doSearchRequest } from '../reducers/actions/searchActions';
 
 //SearchResults functional component
 function SearchResults(props) {
-	  console.log('SearchResults props', props);
-	  if (props.data) {
-		  return (
-		    <div>
-		    	searching for {props.search_value}
-		    	<div>
-		    	results:
-		    	{
-		    	  props.data.map(function(result) {
-					return <div>{result}</div>
-				  })
-				}
-		    	</div>
-		    </div>
-		  );
-	  }
-	  return <div></div>;
+  console.log('SearchResults props', props);
+  if (props.data) {
+	  return (
+	    <div>
+	    	searching for {props.search_value}
+	    	<div>
+	    	results:
+	    	{
+	    	  props.data.map(function(result) {
+				return <div>{result}</div>
+			  })
+			}
+	    	</div>
+	    </div>
+	  );
+  }
+  return <div></div>;
 }
 
 function mapStateToProps(state) {
