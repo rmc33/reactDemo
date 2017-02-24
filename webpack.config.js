@@ -8,7 +8,7 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var config = {
   entry: [
     'webpack-dev-server/client?http://localhost:8080',
-    APP_DIR + '/testRedux.js'
+    APP_DIR + '/index.js'
   ],
   output: {
     path: BUILD_DIR + '/js',
