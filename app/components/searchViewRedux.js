@@ -2,6 +2,10 @@ import React from 'react';
 import { render } from 'react-dom';
 import { connect } from 'react-redux';
 import { doSearchRequest } from '../reducers/actions/searchActions';
+import CubeModule from './Cube';
+import jQuery from 'jquery/dist/jquery';
+import sliderSass from './slider.sass';
+const $ = jQuery;
 
 //SearchResults functional component
 function SearchResults(props) {
@@ -25,9 +29,11 @@ function SearchResults(props) {
 }
 
 function mapStateToProps(state) {
-  console.log('map state to props', state);
+  console.log('map state to props...', state);
+  let search_results = state.search_results;
+
   return {
-    search_results: state.search.search_results
+    search_results
   }
 }
 
@@ -51,6 +57,34 @@ export default class SearchViewRedux extends React.Component {
 	 //life cycle event called after render
 	 componentDidMount() {
 		 this.refs.search_input.focus();
+		 console.log('element = ', document.getElementsByClassName('cube')[0]);
+		 let viewport = new CubeModule.Viewport({
+		  	element: document.getElementsByClassName('cube')[0],
+		  	fps: 20,
+		  	sensivity: .4,
+		  	sensivityFade: .93,
+		  	speed: 5,
+		  	touchSensivity: 1.5
+		  });
+		 let cube = new CubeModule.Cube({
+		  viewport: viewport,
+		  element: document.getElementsByClassName('cube')[0]
+		});
+
+		 $('.carousel .item').each(function(){
+  var next = $(this).next();
+  if (!next.length) {
+    next = $(this).siblings(':first');
+  }
+  next.children(':first-child').clone().appendTo($(this));
+  
+  if (next.next().length>0) {
+    next.next().children(':first-child').clone().appendTo($(this));
+  }
+  else {
+  	$(this).siblings(':first').children(':first-child').clone().appendTo($(this));
+  }
+});
 	 }
 
 	 //life cycle event called when props are changed 
@@ -80,6 +114,32 @@ export default class SearchViewRedux extends React.Component {
 	      	<input ref="search_input" type="text" id="search_input" onChange={this.handleChange} />
 	      	<input type="button" id="search_button" onClick={this.doSearch} value="Search"/>
 	      	<SearchResults search_value={this.state.search_value} data={this.state.search_results.data}/>
+	      	<div id="wrapper">
+  <div className="viewport">
+    <div className="cube">
+      <div className="side">
+        <div className="cube-image">1</div>
+      </div>
+      <div className="side">
+        <div className="cube-image">2</div>
+      </div>
+      <div className="side">
+        <div className="cube-image">3</div>
+      </div>
+      <div className="side">
+        <div className="cube-image">4</div>
+      </div>
+      <div className="side">
+        <div className="cube-image">5</div>
+      </div>
+      <div className="side">
+        <div className="cube-image active">6</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 	      </div>
 	    );
 	 }
