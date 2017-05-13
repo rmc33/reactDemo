@@ -6,6 +6,7 @@ import {addFilterRequest, removeFilterRequest} from '../reducers/actions';
 import LineChart from './LineChart';
 import TreeMapChart from './TreeMapChart';
 var plainMod = require("./plainMod");
+import appCss from '../css/app.css';
 
 var Treemap = require('highcharts/modules/treemap.src'),
 	

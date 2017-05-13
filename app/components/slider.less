@@ -1,0 +1,111 @@
+// ----- Carousel -----  add negative left and right margins for border elements //
+
+.wrap {
+  overflow: hidden;
+  width:100%;
+  float:left;
+  margin-left: -20px;
+  margin-right: -20px;
+}
+
+.carousel {
+  display: flex;
+  left: -100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  transform: translateX(100%);
+  @media (min-width: 30em) {
+    left: -50%;
+    transform: translateX(50%);
+  }
+  @media (min-width: 40em) {
+    left: -33.33333%;
+    transform: translateX(33.33333%);
+  }
+}
+
+// States
+      
+.carousel.is-reversing {
+  transform: translateX(-100%);
+  @media (min-width: 30em) {
+    transform: translateX(-50%);
+  }
+  @media (min-width: 40em) {
+    transform: translateX(-33.33333%);
+  }
+}
+
+.carousel.is-set {
+  transform: none;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+    
+// ----- Seats ----- //
+      
+.carousel-seat {
+  height: 150px;
+  background: #ddd;
+  flex: 1 0 100%;
+  order: 2;
+  &:nth-child(even) {
+    background: #d5d5d5;
+  }
+  @media (min-width: 30em) {
+    flex-basis: 50%;
+  }
+  @media (min-width: 40em) {
+    flex-basis: 33.33333%;
+  }
+}
+
+// States
+    
+.carousel-seat.is-ref {
+  order: 1;
+}
+  
+// ----- Presentation ----- //
+
+h2 {
+  color: #aaa;
+  font-size: 7em;
+  font-weight: normal;
+  margin: 0;
+  /*padding: 0.6em 0;*/
+  text-align: center;
+}
+ 
+.controls {
+  padding: 20px;
+  text-align: center;
+  clear:both;
+  button {
+    background: #aaa;
+    border: 0;
+    border-radius: 0.25em;
+    color: #eee;
+    padding: 0.5em 1em;
+    &:hover,
+    &:focus {
+      background: magenta;
+    }
+  }
+}
+
+.carousel-frame {
+    z-index: 2;
+    width: 20px;
+    height:150px;
+    border-left: 1px solid rgba(255,255,255,0.1);
+    border-right: 1px solid rgba(0,0,0,0.4);
+    background: #343436;
+    float:left;
+    position: relative;
+}
+
+.carousel-container {
+  margin-top: 20px;
+}

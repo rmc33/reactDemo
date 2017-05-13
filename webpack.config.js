@@ -48,18 +48,15 @@ var config = {
         //{ 
           //test: /\.css$/, 
           //loader: "style-loader!css-loader" 
-        //},
+        //},{
+        {
+            test: /\.less$/,
+            loaders: [ 'style-loader', 'css-loader', 'less-loader' ]
+        },
         {
           test: /\.css$/,
           loader: ExtractTextPlugin.extract('style', 'css-loader!postcss-loader')
         },
-        //{ 
-          //test: /\.css$/, 
-          //loader: ExtractTextPlugin.extract({
-                //fallbackLoader: "style-loader",
-                //loader: "css-loader"
-            //}) 
-        //},
         { 
           test: /\.png$/, 
           loader: "url-loader?limit=100000" 

@@ -1,6 +1,6 @@
-import { combineReducers } from 'redux';
+//import { combineReducers } from 'redux';
 
-function search(state = { }, action) {
+export default function search(state = { }, action) {
   switch (action.type) {
     case "SEARCH_STARTED":
       return Object.assign({}, state, {
@@ -16,8 +16,7 @@ function search(state = { }, action) {
   }
 }
 
-const testReducer = combineReducers({
-  search
-});
+//const testReducer = combineReducers({
+  //search
+//});
 
-export default testReducer;
