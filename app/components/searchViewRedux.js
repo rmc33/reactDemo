@@ -5,42 +5,21 @@ import { doSearchRequest } from '../reducers/actions/searchActions';
 import CubeModule from './Cube';
 import jQuery from 'jquery/dist/jquery';
 import sliderSass from './slider.less';
+import SearchTypeahead from './searchTypeahead';
+
 const $ = jQuery;
 
-//SearchResults functional component
-function SearchResults(props) {
-  console.log('SearchResults props', props);
-  if (props.data) {
-	  return (
-	    <div>
-	    	searching for {props.search_value}
-	    	<div>
-	    	results:
-	    	{
-	    	  props.data.map(function(result) {
-				return <div>{result}</div>
-			  })
-			}
-	    	</div>
-	    </div>
-	  );
-  }
-  return <div></div>;
-}
 
 class SearchViewRedux extends React.Component {
 	
 	 constructor(props) {
 	    super(props);
 	    this.state = {search_value: '', search_results: ''};
-
-	    this.handleChange = this.handleChange.bind(this);
-	    this.doSearch = this.doSearch.bind(this);
 	 }
 	 
 	 //life cycle event called after render
 	 componentDidMount() {
-		 this.refs.search_input.focus();
+		 
 		 console.log('element = ', document.getElementsByClassName('cube')[0]);
 		 let viewport = new CubeModule.Viewport({
 		  	element: document.getElementsByClassName('cube')[0],
@@ -95,53 +74,36 @@ class SearchViewRedux extends React.Component {
 		 console.log('receiving props', nextProps);
 		 this.setState({search_results: nextProps.search_results});
 	 }
-	
-	 //save changes to search input
-	 //search view search_value is now used to get value of search instead of accessing dom
-	 handleChange(event) {
-	 	 if (event)
-		 	this.setState({search_value: event.target.value});
-	 }
 	 
-	 //update search results, this will trigger a dom update for just the search results
-	 doSearch(event) {
-		 //we have mapped redux action to props
-		 this.props.doSearchRequest(this.state.search_value);
-	 }
 	
 	 render() {
 	    return (
 	      <div>
-	      	<label>Search</label>
-	      	<input ref="search_input" type="text" id="search_input" onChange={this.handleChange} />
-	      	<input type="button" id="search_button" onClick={this.doSearch} value="Search"/>
-	      	<SearchResults search_value={this.state.search_value} data={this.state.search_results.data}/>
+	      	<SearchTypeahead doSearch={this.props.doSearchRequest} data={this.state.search_results.data}/>
 	      	<div id="wrapper">
-  <div className="viewport">
-    <div className="cube">
-      <div className="side">
-        <div className="cube-image">1</div>
-      </div>
-      <div className="side">
-        <div className="cube-image">2</div>
-      </div>
-      <div className="side">
-        <div className="cube-image">3</div>
-      </div>
-      <div className="side">
-        <div className="cube-image">4</div>
-      </div>
-      <div className="side">
-        <div className="cube-image">5</div>
-      </div>
-      <div className="side">
-        <div className="cube-image active">6</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
+			  <div className="viewport">
+			    <div className="cube">
+			      <div className="side">
+			        <div className="cube-image">1</div>
+			      </div>
+			      <div className="side">
+			        <div className="cube-image">2</div>
+			      </div>
+			      <div className="side">
+			        <div className="cube-image">3</div>
+			      </div>
+			      <div className="side">
+			        <div className="cube-image">4</div>
+			      </div>
+			      <div className="side">
+			        <div className="cube-image">5</div>
+			      </div>
+			      <div className="side">
+			        <div className="cube-image active">6</div>
+			      </div>
+			    </div>
+			  </div>
+			</div>
 	      </div>
 	    );
 	 }
