@@ -28,23 +28,7 @@ function SearchResults(props) {
   return <div></div>;
 }
 
-function mapStateToProps(state) {
-  console.log('map state to props...', state);
-  let search_results = state.search_results;
-
-  return {
-    search_results
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return  {
-    doSearchRequest: (search_value) => dispatch(doSearchRequest(search_value))	  
-  }
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
-export default class SearchViewRedux extends React.Component {
+class SearchViewRedux extends React.Component {
 	
 	 constructor(props) {
 	    super(props);
@@ -163,12 +147,13 @@ export default class SearchViewRedux extends React.Component {
 	 }
 }
 
-/**
 function mapStateToProps(state) {
-    console.log('map state to props', state);
-    return {
-        search_results: state.search.search_results
-    };
+  console.log('map state to props...', state);
+  let search_results = state.search_results;
+
+  return {
+    search_results
+  }
 }
 
 function mapDispatchToProps(dispatch) {
@@ -177,5 +162,5 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
+
 export default connect(mapStateToProps, mapDispatchToProps)(SearchViewRedux);
-**/
