@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import { connect } from 'react-redux';
 import { doSearchRequest } from '../reducers/actions/searchActions';
 import CubeModule from './Cube';
-import jQuery from 'jquery/dist/jquery';
+import jQuery from 'jquery';
 import sliderSass from './slider.less';
 import SearchTypeahead from './searchTypeahead';
 

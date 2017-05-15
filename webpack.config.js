@@ -19,13 +19,18 @@ var config = {
   resolve: {
     extensions: ['', '.js', '.jsx'],
     alias: {
-      "testAMD": APP_DIR + '/components/testAMD'
+      "testAMD": APP_DIR + '/components/testAMD',
+      "jquery": path.resolve(__dirname, "node_modules", "jquery", "dist", "jquery")
     }
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
-    new ExtractTextPlugin("bootstrap.css")
+    new ExtractTextPlugin("bootstrap.css"),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery"
+    })
   ],
   //resolveLoader: { 
  //   root: path.join(__dirname, "node_modules") 
