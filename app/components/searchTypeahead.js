@@ -45,10 +45,12 @@ export default class SearchTypeahead extends React.Component {
 	componentDidUpdate() {
 		this.bindTasks();
 		let set_focus = $('.set_focus').length;
-		if (set_focus) {
+		if (set_focus.length) {
 			set_focus.focus();
 			set_focus.removeClass('set_focus');
 		}
+		//$('.is_last').removeClass('is_last');
+		//$('#' + this.state.tasks[this.state.tasks.length-1].task.id).addClass('is_last');
 	}
 
 	//save changes to search input
@@ -82,15 +84,18 @@ export default class SearchTypeahead extends React.Component {
 		});
 	}
 
-	removeTaskRow(index) {
+	removeTaskRow(itemId) {
 		let tasks = [...this.state.tasks];
-		if (index > 0)
-			delete tasks[index];
+		if (tasks.length > 1)
+			tasks = tasks.filter((item) => {
+				return item.id != itemId;
+			});
 		this.setState({tasks});
 	}
 
 	renderTasks() {
 		return this.state.tasks.map((task, index) => {
+
 			const task_name = `task_input_${index}`;
 			const task_input = task.recordType ? <input type="text" className="set_focus" name={task_name} placeholder={task.recordType.required[0]}/> : '';
 			return (<div className="task_row"><div className="task_select">
@@ -99,35 +104,37 @@ export default class SearchTypeahead extends React.Component {
 		        </select>
 		        </div>
 		        {task_input}
-		        <a className="close" onClick={this.removeTaskRow(index)}></a>
+		        <a className="close" onClick={(event) => this.removeTaskRow(task.id)}></a>
 		        </div>);
 		});
 	}
 
 	bindTasks() {
 		this.state.tasks.forEach((task, index) => {
-			const chosen_task = $('#' + task.id + '_chosen');
-			console.log('adding chosen for tastk ' + task.id, chosen_task);
-			if (chosen_task.length == 0) {
-				$('.is_last').removeClass('is_last');
-				$('#' + task.id).addClass('is_last');
-				$('#' + task.id).chosen({width: '100%'}).change((event) => {
-					console.log('task change ' + task.id, event, $(event.target).val());
-					let all_tasks = [...this.state.tasks];
-					let event_task = this.state.tasks.find((item) => {
-	    				return item.id == $(event.target).attr('id');
-	    			});
-	    			let searchOption = searchOptions.find((item) => {
-	    				return item.value == $(event.target).val();
-	    			});
-	    			event_task.recordType = searchOption.recordType;
-	    			//update event task record type and add new task if last one
-	    			if ($(event.target).hasClass('is_last')) {
-	    				let new_task = 'task'+(this.state.tasks.length+1);
-	    				all_tasks.push({id: new_task});
-	    			}
-					this.setState({'tasks': all_tasks});
-				});
+			if (task) {
+				const chosen_task = $('#' + task.id + '_chosen');
+				console.log('adding chosen for tastk ' + task.id, chosen_task);
+				if (chosen_task.length == 0) {
+					$('.is_last').removeClass('is_last');
+					$('#' + task.id).addClass('is_last');
+					$('#' + task.id).chosen({width: '100%'}).change((event) => {
+						console.log('task change ' + task.id, event, $(event.target).val());
+						let all_tasks = [...this.state.tasks];
+						let event_task = this.state.tasks.find((item) => {
+		    				return item.id == $(event.target).attr('id');
+		    			});
+		    			let searchOption = searchOptions.find((item) => {
+		    				return item.value == $(event.target).val();
+		    			});
+		    			event_task.recordType = searchOption.recordType;
+		    			//update event task record type and add new task if last one
+		    			if ($(event.target).hasClass('is_last')) {
+		    				let new_task = 'task'+(this.state.tasks.length+1);
+		    				all_tasks.push({id: new_task});
+		    			}
+						this.setState({'tasks': all_tasks});
+					});
+				}
 			}
 		});
 	}
