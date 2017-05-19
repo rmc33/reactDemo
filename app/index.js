@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 import App from './components/app';
 import { Provider } from 'react-redux';
@@ -12,5 +11,5 @@ render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById('root')
+  document.getElementById('root-highcharts')
 )

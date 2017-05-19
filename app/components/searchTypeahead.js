@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Button, Grid, Row, Col, Clearfix } from 'react-bootstrap';
 import jQuery from 'jquery';
 const $ = jQuery;
-window.jQuery = $;
 import chosen from 'bootstrap-chosen/dist/chosen.jquery-1.4.2/chosen.jquery';
 import chosenStyle from 'bootstrap-chosen/bootstrap-chosen.css';
 import typeaheadStyle from './typeahead-container.less';
@@ -32,6 +31,7 @@ export default class SearchTypeahead extends React.Component {
 		this.renderTasks = this.renderTasks.bind(this);
 		this.bindTasks = this.bindTasks.bind(this);
 		this.removeTaskRow = this.removeTaskRow.bind(this);
+		this.clearTasks = this.clearTasks.bind(this);
 		this.state = {tasks: [
 			{id: 'task1'}
 		]};
@@ -49,17 +49,11 @@ export default class SearchTypeahead extends React.Component {
 			set_focus.focus();
 			set_focus.removeClass('set_focus');
 		}
-		//$('.is_last').removeClass('is_last');
-		//$('#' + this.state.tasks[this.state.tasks.length-1].task.id).addClass('is_last');
 	}
 
-	//save changes to search input
-	//search view search_value is now used to get value of search instead of accessing dom
 	handleChangeTask(event) {
 	 	if (event) {
 
-		 	//this.setState({search_value: event.target.value});
-		 	//this.props.doSearch(event.target.value);
 		}
 	}
 
@@ -91,6 +85,12 @@ export default class SearchTypeahead extends React.Component {
 				return item.id != itemId;
 			});
 		this.setState({tasks});
+	}
+	
+	clearTasks() {
+		this.setState({tasks: [
+			{id: 'task1'}
+		]});
 	}
 
 	renderTasks() {
@@ -144,10 +144,10 @@ export default class SearchTypeahead extends React.Component {
 		    <div className="typeahead-container">
 		    	{this.renderTasks()}
 		        <div className="button_menu">
-		        	<button name="clear_workflow">Clear Workflow</button>
+		        	<button name="clear_workflow">Run Workflow</button>
+		        	<button name="clear_workflow" onClick={this.clearTasks}>Clear Workflow</button>
 		        	<button name="save_workflow">Save Workflow</button>
 		        	<button name="open_workflow">Open Workflow</button>
-		        	<button name="show_history">Recent History</button>
 		        </div>
 		    </div>
 		);

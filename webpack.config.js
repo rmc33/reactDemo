@@ -6,13 +6,13 @@ var APP_DIR = path.resolve(__dirname, 'app');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var config = {
-  entry: [
-    'webpack-dev-server/client?http://localhost:8080',
-    APP_DIR + '/testRedux.js'
-  ],
+  entry: {
+    'app-test-redux': path.resolve(APP_DIR, 'testRedux.js'),
+    'app-test-highcharts': path.resolve(APP_DIR, 'index.js')
+  },
   output: {
     path: BUILD_DIR + '/js',
-    filename: 'bundle.js',
+    filename: "[name].js",
     publicPath: '',
   },
   devtool: 'eval-source-map',
@@ -32,9 +32,6 @@ var config = {
       jQuery: "jquery"
     })
   ],
-  //resolveLoader: { 
- //   root: path.join(__dirname, "node_modules") 
-  //},
   module : {
 	  loaders: [
 	      {
@@ -49,10 +46,6 @@ var config = {
             ]
           }
         },
-        //{ 
-          //test: /\.css$/, 
-          //loader: "style-loader!css-loader" 
-        //},{
         {
             test: /\.less$/,
             loaders: [ 'style-loader', 'css-loader', 'less-loader' ]
@@ -84,8 +77,7 @@ var config = {
         {
           test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, 
           loader: 'url?limit=10000&mimetype=image/svg+xml'
-        },
-
+        }
      ]
   }
 };
