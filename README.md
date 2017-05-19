@@ -1,5 +1,5 @@
 # reactDemo
-react + webpack + webpack dev server + bootstrap + redux + highcharts
+react, webpack, react-bootstrap, redux, highcharts
 
 start by cloning repo then run:
 
