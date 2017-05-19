@@ -32,6 +32,7 @@ export default class SearchTypeahead extends React.Component {
 		this.bindTasks = this.bindTasks.bind(this);
 		this.removeTaskRow = this.removeTaskRow.bind(this);
 		this.clearTasks = this.clearTasks.bind(this);
+		this.runTasks = this.runTasks.bind(this);
 		this.state = {tasks: [
 			{id: 'task1'}
 		]};
@@ -92,6 +93,12 @@ export default class SearchTypeahead extends React.Component {
 			{id: 'task1'}
 		]});
 	}
+	
+	runTasks() {
+		this.state.tasks.forEach((task) => {
+			console.log('run task', task);
+		});
+	}
 
 	renderTasks() {
 		return this.state.tasks.map((task, index) => {
@@ -144,7 +151,7 @@ export default class SearchTypeahead extends React.Component {
 		    <div className="typeahead-container">
 		    	{this.renderTasks()}
 		        <div className="button_menu">
-		        	<button name="clear_workflow">Run Workflow</button>
+		        	<button name="clear_workflow" onClick={this.runTasks}>Run Workflow</button>
 		        	<button name="clear_workflow" onClick={this.clearTasks}>Clear Workflow</button>
 		        	<button name="save_workflow">Save Workflow</button>
 		        	<button name="open_workflow">Open Workflow</button>
