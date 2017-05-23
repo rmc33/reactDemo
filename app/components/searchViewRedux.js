@@ -6,7 +6,7 @@ import CubeModule from './Cube';
 import jQuery from 'jquery';
 import sliderSass from './slider.less';
 import SearchTypeahead from './searchTypeahead';
-
+import D3Chart from './d3horizontalBarChart';
 const $ = jQuery;
 
 
@@ -77,6 +77,14 @@ class SearchViewRedux extends React.Component {
 	 
 	
 	 render() {
+	    var data = [{product:"Product 1", stack1:20, stack2: 20, stack3: 60},
+	    			{product:"Product 2", stack1:2, stack2: 10, stack3: 50},
+	    			{product:"Product 3", stack1:0, stack2: 0, stack3: 10},
+	    			{product:"Product 4", stack1:4, stack2: 0, stack3: 10},
+	    			{product:"Product 5", stack1:40, stack2: 5, stack3: 100}];
+	    			
+		var key = ["stack1", "stack2", "stack3"];
+
 	    return (
 	      <div>
 	      	<SearchTypeahead doSearch={this.props.doSearchRequest} data={this.state.search_results.data}/>
@@ -104,6 +112,7 @@ class SearchViewRedux extends React.Component {
 			    </div>
 			  </div>
 			</div>
+			<D3Chart data={data} stackKey={key}/>
 	      </div>
 	    );
 	 }

@@ -20,6 +20,7 @@ export default class D3HorizontalBarChart extends Component {
 
     constructor(props) {
       super(props);
+      this.draw = this.draw.bind(this);
     }
     
     componentWillReceiveProps(nextProps) {
@@ -28,21 +29,23 @@ export default class D3HorizontalBarChart extends Component {
     
 
    componentDidMount() {
-
-   	   var bodyWidth = d3.select('.metricsBody').node().getBoundingClientRect().width;
-	   var me = this,
-		domEle = "stacked-bar",
+     this.draw();
+   }
+   
+   draw() {
+   	   let bodyWidth = d3.select('body').node().getBoundingClientRect().width - 20;
+	   let domEle = "stacked-bar",
 		stackKey = this.props.stackKey,
 		data = this.props.data,
-		margin = {top: 20, right: 20, bottom: 30, left: 50},
+		margin = {top: 20, right: 20, bottom: 30, left: 60},
 		parseDate = d3.timeParse("%m/%Y"),
 		width = bodyWidth - margin.left - margin.right,
-		height = 500 - margin.top - margin.bottom,
+		height = 350 - margin.top - margin.bottom,
 		xScale = d3.scaleLinear().rangeRound([0, width]),
-		yScale = d3.scaleBand().rangeRound([height, 0]).padding(0.1),
+		yScale = d3.scaleBand().rangeRound([height, 0]).padding(0.3),
 		color = d3.scaleOrdinal(d3.schemeCategory20),
 		xAxis = d3.axisBottom(xScale).tickFormat((d) => { return d; }).tickSizeInner([-height]),
-		yAxis =  d3.axisLeft(yScale).tickFormat(d3.timeFormat("%b")),
+		yAxis =  d3.axisLeft(yScale),
 		svg = d3.select("#"+domEle).append("svg")
 				.attr("width", width + margin.left + margin.right)
 				.attr("height", height + margin.top + margin.bottom)
@@ -55,60 +58,67 @@ export default class D3HorizontalBarChart extends Component {
 			.attr('fill', '#ffffff')
 			.call(xAxis);
 
-		var stack = d3.stack()
+		let stack = d3.stack()
 			.keys(stackKey)
 			/*.order(d3.stackOrder)*/
 			.offset(d3.stackOffsetNone);
 	
-		var layers = stack(data);
-			data.sort(function(a, b) { return b.total - a.total; });
-			yScale.domain(data.map(function(d) { return parseDate(d.date); }));
+		let layers = stack(data);
+			//data.sort(function(a, b) { return b.total - a.total; });
+			yScale.domain(data.map(function(d) { return d.product; }));
+			
 			xScale.domain([0, d3.max(layers[layers.length - 1], function(d) { return d[0] + d[1]; }) ]).nice();
 
-		var layer = svg.selectAll(".layer")
+		let layer = svg.selectAll(".layer")
 			.data(layers)
 			.enter().append("g")
 			.attr("class", "layer")
 			.style("fill", function(d, i) { return color(i); });
 
-		  layer.selectAll("rect")
+		let outTimeout;
+		
+		layer.selectAll("rect")
 			  .data(function(d) { return d; })
 			.enter().append("rect")
-			  .attr("y", function(d) { return yScale(parseDate(d.data.date)); })
+			  .attr("y", function(d) { return yScale(d.data.product); })
 			  .attr("x", function(d) { return xScale(d[0]); })
 			  .attr("height", yScale.bandwidth())
 			  .attr("width", function(d) { return xScale(d[1]) - xScale(d[0]) })
-			  .on('mouseover', function (d) {
+			  .on('mousemove', function (d) {
+			  		clearInterval(outTimeout);
 			  		var offsetTop = getOffsetTop(document.getElementById('stacked-bar'));
-			  	    console.log('d3 d=', d.data.total, xScale(d.data.total));
-			        var xPos = parseFloat(xScale(d.data.wounds + d.data.other + d.data.disease));
+			        var xPos = parseFloat(xScale(d.data.stack1 + d.data.stack2 + d.data.stack3));
 			        var yPos = parseFloat(d3.select(this).attr('y')) + yScale.bandwidth() / 2;
 			        yPos += offsetTop;
 			        //var xPos = d3.event.pageX - 5;
-
               		//var yPos = d3.event.pageY - 70;
 			        d3.select('#tooltip')
 			            .style('left', xPos + 'px')
 			            .style('top', yPos + 'px')
 			            .select('#value')
-			            .html((d.data.confirmed) + "<br/>" + (d.data.nonConfirmed) + "<br/>" + (d.data.partialConfirmed));
+			            .html(`<span class='tipLabel'>Stack 1:</span> ${d.data.stack1}
+			            <br/><span class='tipLabel'>Stack 2:</span> ${d.data.stack2}
+			            <br/><span class='tipLabel'>Stack 3:</span> ${d.data.stack3}`);
 
 			        d3.select('#tooltip').classed('hidden', false);
 			    })
 			    .on('mouseout', function () {
-			        d3.select('#tooltip').classed('hidden', true);
+			        clearInterval(outTimeout);
+			    	outTimeout = setInterval(() => {
+						d3.select('#tooltip').classed('hidden', true);			    	
+			    	}, 1000);
 			    })
 
 			svg.append("g")
 			.attr("class", "axis axis--y")
 			.attr("transform", "translate(0,0)")
-			.call(yAxis);							
+			.call(yAxis);	
    }
    
    render() {
      return (<div id="stacked-bar">
-     	<div id="tooltip" class="hidden">
-	     <p><span id="value">100</span>
+     	<div id="tooltip" className="hidden">
+	     <p><span id="value"></span>
 	     </p>
 	   </div></div>);
    }

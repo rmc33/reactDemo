@@ -15,7 +15,7 @@ var config = {
     filename: "[name].js",
     publicPath: '',
   },
-  devtool: 'eval-source-map',
+  devtool: 'source-map',
   resolve: {
     extensions: ['', '.js', '.jsx'],
     alias: {
