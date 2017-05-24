@@ -77,13 +77,12 @@ class SearchViewRedux extends React.Component {
 	 
 	
 	 render() {
-	    var data = [{product:"Product 1", stack1:20, stack2: 20, stack3: 60},
-	    			{product:"Product 2", stack1:2, stack2: 10, stack3: 50},
-	    			{product:"Product 3", stack1:0, stack2: 0, stack3: 10},
-	    			{product:"Product 4", stack1:4, stack2: 0, stack3: 10},
-	    			{product:"Product 5", stack1:40, stack2: 5, stack3: 100}];
-	    			
-		var key = ["stack1", "stack2", "stack3"];
+	    var data = [
+	    	{productStatus:"confirmed", stack1:20, group1:true, product: "Product 1", stack2: 20, stack3: 60},
+			{productStatus:"unconfirmed", stack4:26, group1:false, product: "Product 1",stack5: 2, stack6: 60},
+			{productStatus:"confirmed", stack1:2, group1:true, product: "Product 2", stack2: 10, stack3: 50},
+    		{productStatus:"unconfirmed", stack4:21, group1:false, product: "Product 2", stack5: 10, stack6: 50}
+	    ];
 
 	    return (
 	      <div>
@@ -112,7 +111,7 @@ class SearchViewRedux extends React.Component {
 			    </div>
 			  </div>
 			</div>
-			<D3Chart data={data} stackKey={key}/>
+			<D3Chart data={data}/>
 	      </div>
 	    );
 	 }

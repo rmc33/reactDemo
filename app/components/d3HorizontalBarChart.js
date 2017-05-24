@@ -42,77 +42,66 @@ export default class D3HorizontalBarChart extends Component {
 		width = bodyWidth - margin.left - margin.right,
 		height = 350 - margin.top - margin.bottom,
 		xScale = d3.scaleLinear().rangeRound([0, width]),
-		yScale = d3.scaleBand().rangeRound([height, 0]).padding(0.3),
+		yScale1 = d3.scaleBand().padding(.3),
+		yScale0 = d3.scaleBand().rangeRound([height, 0]),
 		color = d3.scaleOrdinal(d3.schemeCategory20),
 		xAxis = d3.axisBottom(xScale).tickFormat((d) => { return d; }).tickSizeInner([-height]),
-		yAxis =  d3.axisLeft(yScale),
+		yAxis =  d3.axisLeft(yScale0),
 		svg = d3.select("#"+domEle).append("svg")
 				.attr("width", width + margin.left + margin.right)
 				.attr("height", height + margin.top + margin.bottom)
 				.append("g")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		svg.append("g")
-			.attr("class", "axis axis--x")
-			.attr("transform", "translate(0," + (height+5) + ")")
-			.attr('fill', '#ffffff')
-			.call(xAxis);
 
-		let stack = d3.stack()
-			.keys(stackKey)
-			/*.order(d3.stackOrder)*/
-			.offset(d3.stackOffsetNone);
-	
-		let layers = stack(data);
-			//data.sort(function(a, b) { return b.total - a.total; });
-			yScale.domain(data.map(function(d) { return d.product; }));
+		yScale0.domain(data.map(function(d) { return d.product; }));
+		yScale1.domain(data.map(function(d) { return d.productStatus;})).rangeRound([yScale0.bandwidth(), 0]);
+
+		xScale.domain([0, d3.max(data, (d) => { 
+			//console.log('domain d=', d);
+			if (d.group1) return d.stack1 + d.stack2 + d.stack3;
+			return d.stack4 + d.stack5 + d.stack6; 
+		}) ]).nice();
+
 			
-			xScale.domain([0, d3.max(layers[layers.length - 1], function(d) { return d[0] + d[1]; }) ]).nice();
+			let layer = svg.selectAll(".layer")
+				.data(data)
+				.enter().append("g")
+				.attr("class", "layer")
+				.attr("transform", function(d) { console.log("transform, d=", d); return "translate(0," + yScale0(d.product) + ")"; });
 
-		let layer = svg.selectAll(".layer")
-			.data(layers)
-			.enter().append("g")
-			.attr("class", "layer")
-			.style("fill", function(d, i) { return color(i); });
+			let outTimeout;
+			
+			layer.selectAll("rect")
+				.data(function(d) {
+					let stack = d3.stack().keys((item) => {
+						//console.log('keys d=', item);
+						if (item[0].group1) return ['stack1','stack2','stack3']
+						return ['stack4','stack5','stack6'];
+					}).offset(d3.stackOffsetNone);
+					//console.log('d3 data=', d);
+					return stack([d]);
+				})
+				.enter()
+				.append("rect")
+				  .attr("y", function(d, i) { return yScale1(d[0].data.productStatus); })
+				  .attr("x", function(d, i) { return xScale(d[0][0]); })
+				  .attr("height", yScale1.bandwidth())
+				  .attr("width", function(d,i) { return xScale(d[0][1]) - xScale(d[0][0]) })
+				  .style("fill", function(d, i) { return color(i); })
+					  
 
-		let outTimeout;
 		
-		layer.selectAll("rect")
-			  .data(function(d) { return d; })
-			.enter().append("rect")
-			  .attr("y", function(d) { return yScale(d.data.product); })
-			  .attr("x", function(d) { return xScale(d[0]); })
-			  .attr("height", yScale.bandwidth())
-			  .attr("width", function(d) { return xScale(d[1]) - xScale(d[0]) })
-			  .on('mousemove', function (d) {
-			  		clearInterval(outTimeout);
-			  		var offsetTop = getOffsetTop(document.getElementById('stacked-bar'));
-			        var xPos = parseFloat(xScale(d.data.stack1 + d.data.stack2 + d.data.stack3));
-			        var yPos = parseFloat(d3.select(this).attr('y')) + yScale.bandwidth() / 2;
-			        yPos += offsetTop;
-			        //var xPos = d3.event.pageX - 5;
-              		//var yPos = d3.event.pageY - 70;
-			        d3.select('#tooltip')
-			            .style('left', xPos + 'px')
-			            .style('top', yPos + 'px')
-			            .select('#value')
-			            .html(`<span class='tipLabel'>Stack 1:</span> ${d.data.stack1}
-			            <br/><span class='tipLabel'>Stack 2:</span> ${d.data.stack2}
-			            <br/><span class='tipLabel'>Stack 3:</span> ${d.data.stack3}`);
+		svg.append("g")
+		.attr("class", "axis axis--x")
+		.attr("transform", "translate(0," + (height+5) + ")")
+		.attr('fill', '#ffffff')
+		.call(xAxis);
 
-			        d3.select('#tooltip').classed('hidden', false);
-			    })
-			    .on('mouseout', function () {
-			        clearInterval(outTimeout);
-			    	outTimeout = setInterval(() => {
-						d3.select('#tooltip').classed('hidden', true);			    	
-			    	}, 1000);
-			    })
-
-			svg.append("g")
-			.attr("class", "axis axis--y")
-			.attr("transform", "translate(0,0)")
-			.call(yAxis);	
+		svg.append("g")
+		.attr("class", "axis axis--y")
+		.attr("transform", "translate(0,0)")
+		.call(yAxis);	
    }
    
    render() {
