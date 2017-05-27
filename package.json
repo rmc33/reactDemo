@@ -12,6 +12,9 @@
   },
   "license": "MIT",
   "dependencies": {},
+  "optionalDependencies": {
+  	"lodash": "^4.17.4"
+  },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
     "babel-core": "^6.21.0",
