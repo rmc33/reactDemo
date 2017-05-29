@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {},
   "optionalDependencies": {
-  	"lodash": "^4.17.4"
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
@@ -40,6 +40,7 @@
     "json-loader": "^0.5.4",
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
+    "popper.js": "^1.9.9",
     "postcss-loader": "^0.9.1",
     "react": "^15.4.1",
     "react-addons-test-utils": "^15.0.2",

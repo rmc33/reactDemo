@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import * as d3 from "d3";
 window.d3 = d3;
 import chartStyles from './d3horizontalBarChart.less';
+import Popper from 'popper.js';
 
 const getOffsetTop = (elem) => {
     var offsetTop = 0;
@@ -64,39 +65,66 @@ export default class D3HorizontalBarChart extends Component {
 		}) ]).nice();
 
 			
-			let layer = svg.selectAll(".layer")
-				.data(data)
-				.enter().append("g")
-				.attr("class", "layer")
-				.attr("transform", function(d) { console.log("transform, d=", d); return "translate(0," + yScale0(d.product) + ")"; });
-
-			let outTimeout;
-			
-			layer.selectAll("rect")
-				.data(function(d) {
-					let stack = d3.stack().keys((item) => {
-						//console.log('keys d=', item);
-						if (item[0].group1) return ['stack1','stack2','stack3']
-						return ['stack4','stack5','stack6'];
-					}).offset(d3.stackOffsetNone);
-					//console.log('d3 data=', d);
-					return stack([d]);
-				})
-				.enter()
-				.append("rect")
-				  .attr("y", function(d, i) { return yScale1(d[0].data.productStatus); })
-				  .attr("x", function(d, i) { return xScale(d[0][0]); })
-				  .attr("height", yScale1.bandwidth())
-				  .attr("width", function(d,i) { return xScale(d[0][1]) - xScale(d[0][0]) })
-				  .style("fill", function(d, i) { return color(i); })
-					  
-
-		
 		svg.append("g")
 		.attr("class", "axis axis--x")
 		.attr("transform", "translate(0," + (height+5) + ")")
 		.attr('fill', '#ffffff')
 		.call(xAxis);
+
+		let layer = svg.selectAll(".layer")
+			.data(data)
+			.enter().append("g")
+			.attr("class", "layer")
+			.attr("transform", function(d) { console.log("transform, d=", d); return "translate(0," + yScale0(d.product) + ")"; });
+
+		
+		layer.selectAll("rect")
+			.data(function(d) {
+				let stack = d3.stack().keys((item) => {
+					//console.log('keys d=', item);
+					if (item[0].group1) return ['stack1','stack2','stack3']
+					return ['stack4','stack5','stack6'];
+				}).offset(d3.stackOffsetNone);
+				//console.log('d3 data=', d);
+				return stack([d]);
+			})
+			.enter()
+			.append("rect")
+			  .attr("y", function(d, i) { return yScale1(d[0].data.productStatus); })
+			  .attr("x", function(d, i) { return xScale(d[0][0]); })
+			  .attr("height", yScale1.bandwidth())
+			  .attr("width", function(d,i) { return xScale(d[0][1]) - xScale(d[0][0]) })
+			  .style("fill", function(d, i) { return color(i); })
+			.on('mouseover', function(d) {
+				console.log('mouseover d=', d);
+				d3.select('#tooltip').remove();
+				d3.select(this).style('opacity', '.3');
+				let tooltip = d3.select('body').append("div")
+					.attr("id", "tooltip")
+					.attr("class", "popper")
+					.html(`<p class="bold">${d[0].data.product} ${d[0].data.productStatus}</p>
+					    <p class="thin">${d[0].data[d.key]}</p>
+					    <div class="popper__arrow" x-arrow></div>`);
+
+				let popper = new Popper(d3.select(this).node(), tooltip.node(), {
+			        placement: 'top',
+			        modifiers: {
+			            flip: {
+			                behavior: ['top', 'bottom', 'right', 'left'],
+			            },
+			            preventOverflow: {
+            				boundariesElement: d3.select('#stacked-bar').node(),
+        				},
+			        }
+			    });
+
+			})
+			.on('mouseout', function(d) {
+				d3.select('#tooltip').remove();
+				d3.select(this).style('opacity', '1');
+			});
+					  
+
 
 		svg.append("g")
 		.attr("class", "axis axis--y")
