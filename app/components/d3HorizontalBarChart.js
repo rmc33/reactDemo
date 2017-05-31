@@ -6,17 +6,6 @@ window.d3 = d3;
 import chartStyles from './d3horizontalBarChart.less';
 import Popper from 'popper.js';
 
-const getOffsetTop = (elem) => {
-    var offsetTop = 0;
-    do {
-      if ( !isNaN( elem.offsetTop ) )
-      {
-          offsetTop += elem.offsetTop;
-      }
-    } while( elem = elem.offsetParent );
-    return offsetTop;
-}
-
 export default class D3HorizontalBarChart extends Component {
 
     constructor(props) {
@@ -29,7 +18,6 @@ export default class D3HorizontalBarChart extends Component {
       console.log ('D3HorizontalBarChart receive props', nextProps);
     }
     
-
    componentDidMount() {
      this.draw();
      d3.select(window).on('resize', this.resize); 
@@ -38,7 +26,6 @@ export default class D3HorizontalBarChart extends Component {
    draw() {
    	   let bodyWidth = d3.select('body').node().getBoundingClientRect().width - 20;
 	   let domEle = "stacked-bar",
-		stackKey = this.props.stackKey,
 		data = this.props.data,
 		margin = {top: 20, right: 20, bottom: 30, left: 60},
 		parseDate = d3.timeParse("%m/%Y"),
@@ -60,12 +47,10 @@ export default class D3HorizontalBarChart extends Component {
 		yScale1.domain(data.map(function(d) { return d.productStatus;})).rangeRound([yScale0.bandwidth(), 0]);
 
 		xScale.domain([0, d3.max(data, (d) => { 
-			//console.log('domain d=', d);
-			if (d.group1) return d.stack1 + d.stack2 + d.stack3;
-			return d.stack4 + d.stack5 + d.stack6; 
+			//return total for each group
+			return d.stack1 + d.stack2 + d.stack3;
 		}) ]).nice();
 
-			
 		svg.append("g")
 		.attr("class", "axis axis-x")
 		.attr("transform", "translate(0," + (height+5) + ")")
@@ -76,17 +61,13 @@ export default class D3HorizontalBarChart extends Component {
 			.data(data)
 			.enter().append("g")
 			.attr("class", "layer")
-			.attr("transform", function(d) { console.log("transform, d=", d); return "translate(0," + yScale0(d.product) + ")"; });
+			.attr("transform", function(d) { 
+			return "translate(0," + yScale0(d.product) + ")"; 
+		});
 
-		
 		layer.selectAll("rect")
 			.data(function(d) {
-				let stack = d3.stack().keys((item) => {
-					//console.log('keys d=', item);
-					if (item[0].group1) return ['stack1','stack2','stack3']
-					return ['stack4','stack5','stack6'];
-				}).offset(d3.stackOffsetNone);
-				//console.log('d3 data=', d);
+				let stack = d3.stack().keys(['stack1','stack2','stack3']).offset(d3.stackOffsetNone);
 				return stack([d]);
 			})
 			.enter()
@@ -104,7 +85,7 @@ export default class D3HorizontalBarChart extends Component {
 					.attr("id", "tooltip")
 					.attr("class", "popper")
 					.html(`<p class="bold">${d[0].data.product} ${d[0].data.productStatus}</p>
-					    <p class="thin">${d[0].data[d.key]}</p>
+					    ${d.key}:<span class="thin">${d[0].data[d.key]}</span>
 					    <div class="popper__arrow" x-arrow></div>`);
 
 				let popper = new Popper(d3.select(this).node(), tooltip.node(), {
@@ -128,11 +109,10 @@ export default class D3HorizontalBarChart extends Component {
 	    	  .attr("width", function(d,i) { return xScale(d[0][1]) - xScale(d[0][0]) })
 			
 
-
 		svg.append("g")
 		.attr("class", "axis axis-y")
 		.attr("transform", "translate(0,0)")
-		.call(yAxis);	
+		.call(yAxis);
    }
    
    resize() {
@@ -140,7 +120,6 @@ export default class D3HorizontalBarChart extends Component {
    	 //get new height and width
 	let bodyWidth = d3.select('body').node().getBoundingClientRect().width - 20;
 	   let domEle = "stacked-bar",
-		stackKey = this.props.stackKey,
 		data = this.props.data,
 		margin = {top: 20, right: 20, bottom: 30, left: 60},
 		width = bodyWidth - margin.left - margin.right,
@@ -160,8 +139,7 @@ export default class D3HorizontalBarChart extends Component {
 	yScale1.domain(data.map(function(d) { return d.productStatus;})).rangeRound([yScale0.bandwidth(), 0]);
 
 	xScale.domain([0, d3.max(data, (d) => { 
-		if (d.group1) return d.stack1 + d.stack2 + d.stack3;
-		return d.stack4 + d.stack5 + d.stack6; 
+		return d.stack1 + d.stack2 + d.stack3;
 	}) ]).nice();
 
     //update rects
