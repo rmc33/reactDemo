@@ -22,6 +22,7 @@ export default class D3HorizontalBarChart extends Component {
     constructor(props) {
       super(props);
       this.draw = this.draw.bind(this);
+      this.resize = this.resize.bind(this);
     }
     
     componentWillReceiveProps(nextProps) {
@@ -31,6 +32,7 @@ export default class D3HorizontalBarChart extends Component {
 
    componentDidMount() {
      this.draw();
+     d3.select(window).on('resize', this.resize); 
    }
    
    draw() {
@@ -41,7 +43,7 @@ export default class D3HorizontalBarChart extends Component {
 		margin = {top: 20, right: 20, bottom: 30, left: 60},
 		parseDate = d3.timeParse("%m/%Y"),
 		width = bodyWidth - margin.left - margin.right,
-		height = 350 - margin.top - margin.bottom,
+		height = 250 - margin.top - margin.bottom,
 		xScale = d3.scaleLinear().rangeRound([0, width]),
 		yScale1 = d3.scaleBand().padding(.3),
 		yScale0 = d3.scaleBand().rangeRound([height, 0]),
@@ -54,7 +56,6 @@ export default class D3HorizontalBarChart extends Component {
 				.append("g")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
 		yScale0.domain(data.map(function(d) { return d.product; }));
 		yScale1.domain(data.map(function(d) { return d.productStatus;})).rangeRound([yScale0.bandwidth(), 0]);
 
@@ -66,7 +67,7 @@ export default class D3HorizontalBarChart extends Component {
 
 			
 		svg.append("g")
-		.attr("class", "axis axis--x")
+		.attr("class", "axis axis-x")
 		.attr("transform", "translate(0," + (height+5) + ")")
 		.attr('fill', '#ffffff')
 		.call(xAxis);
@@ -90,12 +91,12 @@ export default class D3HorizontalBarChart extends Component {
 			})
 			.enter()
 			.append("rect")
+			  .attr("class", "bar-rect")
 			  .attr("y", function(d, i) { return yScale1(d[0].data.productStatus); })
 			  .attr("x", function(d, i) { return xScale(d[0][0]); })
 			  .attr("height", yScale1.bandwidth())
-			  .attr("width", function(d,i) { return xScale(d[0][1]) - xScale(d[0][0]) })
 			  .style("fill", function(d, i) { return color(i); })
-			.on('mouseover', function(d) {
+			  .on('mouseover', function(d) {
 				console.log('mouseover d=', d);
 				d3.select('#tooltip').remove();
 				d3.select(this).style('opacity', '.3');
@@ -117,20 +118,72 @@ export default class D3HorizontalBarChart extends Component {
         				},
 			        }
 			    });
-
-			})
-			.on('mouseout', function(d) {
+			  })
+			  .on('mouseout', function(d) {
 				d3.select('#tooltip').remove();
 				d3.select(this).style('opacity', '1');
-			});
-					  
+			  })
+			  .transition()
+	    	  .delay(function(d, i) { return i * 50; })
+	    	  .attr("width", function(d,i) { return xScale(d[0][1]) - xScale(d[0][0]) })
+			
 
 
 		svg.append("g")
-		.attr("class", "axis axis--y")
+		.attr("class", "axis axis-y")
 		.attr("transform", "translate(0,0)")
 		.call(yAxis);	
    }
+   
+   resize() {
+   	 
+   	 //get new height and width
+	let bodyWidth = d3.select('body').node().getBoundingClientRect().width - 20;
+	   let domEle = "stacked-bar",
+		stackKey = this.props.stackKey,
+		data = this.props.data,
+		margin = {top: 20, right: 20, bottom: 30, left: 60},
+		width = bodyWidth - margin.left - margin.right,
+		height = 250 - margin.top - margin.bottom,
+		xScale = d3.scaleLinear().rangeRound([0, width]),
+		yScale1 = d3.scaleBand().padding(.3),
+		yScale0 = d3.scaleBand().rangeRound([height, 0]),
+		xAxis = d3.axisBottom(xScale).tickFormat((d) => { return d; }).tickSizeInner([-height]),
+		yAxis =  d3.axisLeft(yScale0);
+		
+	//update svg and scales
+	let svg = d3.select("#"+domEle + " svg")
+				.attr("width", (width + margin.left + margin.right))
+				.attr("height", (height + margin.top + margin.bottom));
+				
+	yScale0.domain(data.map(function(d) { return d.product; }));
+	yScale1.domain(data.map(function(d) { return d.productStatus;})).rangeRound([yScale0.bandwidth(), 0]);
+
+	xScale.domain([0, d3.max(data, (d) => { 
+		if (d.group1) return d.stack1 + d.stack2 + d.stack3;
+		return d.stack4 + d.stack5 + d.stack6; 
+	}) ]).nice();
+
+    //update rects
+    svg.selectAll('.bar-rect')
+    	.attr("y", function(d, i) { return yScale1(d[0].data.productStatus); })
+		.attr("x", function(d, i) { return xScale(d[0][0]); })
+		.attr("height", yScale1.bandwidth())
+		.attr("width", function(d,i) { return xScale(d[0][1]) - xScale(d[0][0]) })
+    
+    //update axis
+    svg.select('.axis-x')
+    	.attr("transform", "translate(0," + (height+5) + ")")
+		.attr('fill', '#ffffff')
+		.call(xAxis);
+	
+    svg.select('.axis-y')
+    	.attr("transform", "translate(0,0)")
+		.call(yAxis);
+    
+    
+   }
+   
    
    render() {
      return (<div id="stacked-bar">
