@@ -221,7 +221,7 @@ class App extends React.Component {
     };
 
     return chartObjects.map(function(item) {
-        return <Col md={6} lg={6} style={styles.chartCol}>
+        return <Col md={12} lg={6} style={styles.chartCol}>
             <item.chartComponent {...filterActions} title={item.title} options={item.options} container={item.container} style={styles.chart} modules={item.modules}>
             </item.chartComponent>
         </Col>;

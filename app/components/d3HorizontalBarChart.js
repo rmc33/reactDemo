@@ -1,10 +1,10 @@
-// @flow
-
 import React, { Component } from 'react';
 import * as d3 from "d3";
-window.d3 = d3;
+window.d3 = d3;//added for debugging
 import chartStyles from './d3horizontalBarChart.less';
-import Popper from 'popper.js';
+//import Popper from 'popper.js';
+import jQuery from 'jquery';
+const $ = jQuery;
 
 export default class D3HorizontalBarChart extends Component {
 
@@ -43,6 +43,14 @@ export default class D3HorizontalBarChart extends Component {
 				.append("g")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+		svg.append('defs')
+			.html(`<filter id="glow">
+				    <feGaussianBlur stdDeviation="6.5" result="coloredBlur"/>
+				    <feMerge>
+				        <feMergeNode in="coloredBlur"/>
+				        <feMergeNode in="SourceGraphic"/>
+				    </feMerge></filter>`);
+		
 		yScale0.domain(data.map(function(d) { return d.product; }));
 		yScale1.domain(data.map(function(d) { return d.productStatus;})).rangeRound([yScale0.bandwidth(), 0]);
 
@@ -64,7 +72,7 @@ export default class D3HorizontalBarChart extends Component {
 			.attr("transform", function(d) { 
 			return "translate(0," + yScale0(d.product) + ")"; 
 		});
-
+		let lastX = 0;
 		layer.selectAll("rect")
 			.data(function(d) {
 				let stack = d3.stack().keys(['stack1','stack2','stack3']).offset(d3.stackOffsetNone);
@@ -77,32 +85,44 @@ export default class D3HorizontalBarChart extends Component {
 			  .attr("x", function(d, i) { return xScale(d[0][0]); })
 			  .attr("height", yScale1.bandwidth())
 			  .style("fill", function(d, i) { return color(i); })
-			  .on('mouseover', function(d) {
+			  //.style("stroke","black")
+			  .on('click', function(d, i) {
 				console.log('mouseover d=', d);
+				//if (lastHoveredIndex == i) return;
+				let yPos = $(this).offset().top +  yScale1.bandwidth();
+				let clickedX = d3.event.pageX;
+				if (!lastX) lastX = clickedX;
 				d3.select('#tooltip').remove();
-				d3.select(this).style('opacity', '.3');
+				$('.bar-rect').removeClass('active');
+				d3.select(this).attr('class', 'bar-rect active');
 				let tooltip = d3.select('body').append("div")
 					.attr("id", "tooltip")
 					.attr("class", "popper")
+					.attr("x-placement", "bottom")
 					.html(`<p class="bold">${d[0].data.product} ${d[0].data.productStatus}</p>
 					    ${d.key}:<span class="thin">${d[0].data[d.key]}</span>
-					    <div class="popper__arrow" x-arrow></div>`);
-
-				let popper = new Popper(d3.select(this).node(), tooltip.node(), {
-			        placement: 'top',
-			        modifiers: {
-			            flip: {
-			                behavior: ['top', 'bottom', 'right', 'left'],
-			            },
-			            preventOverflow: {
-            				boundariesElement: d3.select('#stacked-bar').node(),
-        				},
-			        }
-			    });
+					    <div class="popper__arrow"/>`)
+					.style("left", lastX+'px')
+					.style("top", yPos)
+					.style("opacity", '.8');
+				 
+				 let width = $(tooltip.node()).width() / 2;
+				 console.log(`width=${width},clickedX=${clickedX}`);
+				 $(tooltip.node()).css({
+            		left: (clickedX - width - 10)+'px'
+               	 }).find('.popper__arrow').css({
+               	 	left: (width) + 'px' 
+               	 });
+               	 $(tooltip.node()).animate({
+            		opacity: '1',
+               	 });
+               	 lastX = clickedX - width - 10;
+			  })
+			  .on('mouseover', function(d,i) {
+				//d3.select(this).style('stroke', color(i));
 			  })
 			  .on('mouseout', function(d) {
-				d3.select('#tooltip').remove();
-				d3.select(this).style('opacity', '1');
+				//d3.select(this).style('stroke', 'white');
 			  })
 			  .transition()
 	    	  .delay(function(d, i) { return i * 50; })
@@ -117,7 +137,7 @@ export default class D3HorizontalBarChart extends Component {
    
    resize() {
    	 
-   	 //get new height and width
+   	//get new height and width
 	let bodyWidth = d3.select('body').node().getBoundingClientRect().width - 20;
 	   let domEle = "stacked-bar",
 		data = this.props.data,
@@ -162,13 +182,8 @@ export default class D3HorizontalBarChart extends Component {
     
    }
    
-   
    render() {
-     return (<div id="stacked-bar">
-     	<div id="tooltip" className="hidden">
-	     <p><span id="value"></span>
-	     </p>
-	   </div></div>);
+     return (<div id="stacked-bar"></div>);
    }
    
    

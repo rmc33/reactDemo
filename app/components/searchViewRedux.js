@@ -81,7 +81,9 @@ class SearchViewRedux extends React.Component {
 	    	{product: "Product 1", productStatus:"group1", stack1:20, stack2: 20, stack3: 60},
 			{product: "Product 1", productStatus:"group2", stack1:26, stack2: 2,  stack3: 60},
 			{product: "Product 2", productStatus:"group1", stack1:2,  stack2: 10, stack3: 50},
-    		{product: "Product 2", productStatus:"group2", stack1:21, stack2: 10, stack3: 50}
+    		{product: "Product 2", productStatus:"group2", stack1:21, stack2: 10, stack3: 50},
+    		{product: "Product 3", productStatus:"group1", stack1:12,  stack2: 12, stack3: 5},
+    		{product: "Product 3", productStatus:"group2", stack1:21, stack2: 13, stack3: 50}
 	    ];
 
 	    return (
