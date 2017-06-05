@@ -85,6 +85,12 @@ class SearchViewRedux extends React.Component {
     		{product: "Product 3", productStatus:"group1", stack1:12,  stack2: 12, stack3: 5},
     		{product: "Product 3", productStatus:"group2", stack1:21, stack2: 13, stack3: 50}
 	    ];
+	    
+	    const colors = {
+	    	stack1: 'red',
+	    	stack2: 'orange',
+	    	stack3: 'green'
+	    };
 
 	    return (
 	      <div>
@@ -113,7 +119,7 @@ class SearchViewRedux extends React.Component {
 			    </div>
 			  </div>
 			</div>
-			<D3Chart data={data}/>
+			<D3Chart title="Products Grouped By Status D3" data={data} colors={colors}/>
 	      </div>
 	    );
 	 }

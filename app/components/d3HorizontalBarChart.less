@@ -1,24 +1,20 @@
 .axis text {
-  font: 10px sans-serif;
-  fill: #D4D8DA;
+  font: 12px sans-serif;
+  fill: #666666;
 }
 
 .tipLabel {
 	color: #D4D8DA;
 }
 
-
-    
 .bar-rect:hover {
   cursor: pointer;
   opacity: .8;
 }
 
 .bar-rect.active {
-  stroke: #fff;
   opacity: 1;
 }
-
 
 .axis path, .axis line {
     fill: none;
@@ -33,7 +29,7 @@
   stroke-width: 1.5px;
 }
 svg {
-  background: #343436;
+  background: #fff;
 }
 
 #tooltip {
@@ -44,21 +40,26 @@ svg {
   background-color: white;
   color: black;
   border-radius: 2px;
+  visibility: hidden; /* hides sub-menu */
+  z-index: -1;
+  transform: translateY(-2em);
+  transition: all 0.3s ease-in-out 0s, visibility 0s linear 0.3s, z-index 0s linear 0.01s;
 }
 
 
-#tooltip.hidden {
-    display: none;
+#tooltip.shown {
+  visibility: visible; /* shows sub-menu */
+  opacity: 1;
+  z-index: 1;
+  transform: translateY(0%);
+  transition-delay: 0s, 0s, 0.3s; /* this removes the transition delay so the menu will be visible while the other styles transition */
 }
+
 
 #tooltip p {
     margin: 0;
     font-family: sans-serif;
     font-size: 12px;
-}
-
-#stacked-bar {
-	margin-left: 10px;
 }
 
 .link-anchor {
@@ -137,6 +138,15 @@ p.bold {
     border-color: white;
 }
 
+.popper .popper__arrow_outline  {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    position: absolute;
+    margin: 0px;
+    border-color: rgba(0, 0, 0, 0.5);
+}
+
 .popper[x-placement^="top"] {
     margin-bottom: 5px;
 }
@@ -156,7 +166,7 @@ p.bold {
     margin-top: 5px;
 }
 
-.popper[x-placement^="bottom"] .popper__arrow {
+.popper[x-placement^="bottom"] .popper__arrow, .popper[x-placement^="bottom"] .popper__arrow_outline {
     border-width: 0 5px 5px 5px;
     border-left-color: transparent;
     border-right-color: transparent;
@@ -166,6 +176,18 @@ p.bold {
     margin-top: 0;
     margin-bottom: 0;
 }
+
+.popper[x-placement^="bottom"] .popper__arrow:before {
+    border-width: 0 5px 5px 5px;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-top-color: transparent;
+    top: -5px;
+    left: calc(50% - 5px);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 
 .popper[x-placement^="right"] {
     margin-left: 5px;

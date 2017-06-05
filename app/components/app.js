@@ -7,12 +7,41 @@ import LineChart from './LineChart';
 import TreeMapChart from './TreeMapChart';
 var plainMod = require("./plainMod");
 import appCss from '../css/app.css';
+import jQuery from 'jquery';
+const $ = jQuery;
+
+function openDialog(evt,series) {
+	    console.log('click evt=', evt, arguments);
+        let clickedX = evt.pageX;
+        let rect = $(evt.target);
+        let tooltip = $("<div>", {id: "tooltip", 
+        	"class": "popper",
+        	"x-placement": "bottom"
+        }).html(`<p class="bold">Product Group</p>
+			    Key:<span class="thin">Value</span>
+			    <div class="popper__arrow_outline"></div><div class="popper__arrow"></div>`)
+			.css("top", (rect.offset().top + rect.height()) + 'px');
+			
+		console.log('tooltip =', tooltip); 
+		
+		$('body').append(tooltip);
+			
+		 let width = tooltip.width() / 2;
+		 console.log(`width=${width},clickedX=${clickedX}`);
+		 tooltip.css('left', (clickedX - width - 10)+'px')
+		 	.addClass('shown')
+		 	.find('.popper__arrow')
+		 	.css({
+       	 		left: (width) + 'px' 
+       	 	});
+}
 
 var Treemap = require('highcharts/modules/treemap.src'),
 	
 	styles = {
 		chart: {
 			height: '260px',
+			width: 'inherit'
 		},
         chartCol: {
             'position': 'relative',
@@ -33,59 +62,93 @@ var Treemap = require('highcharts/modules/treemap.src'),
     chartObjects = [
         {
             chartComponent: LineChart,
-            title: "Monthly Average Temperature",
+            title: "Products Grouped By Status Highcharts",
             container: 'linecontainer',
             options: {
-                title: {
-                    text: '',
-                    //x: -20 //center
-                },
-                xAxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                },
-                yAxis: {
-                    title: {
-                        text: 'Temperature (°C)'
-                    },
-                    plotLines: [{
-                        value: 0,
-                        width: 1,
-                        color: '#808080'
-                    }]
-                },
-                tooltip: {
-                    valueSuffix: '°C'
-                },
-                legend: {
-                    layout: 'vertical',
-                    align: 'right',
-                    verticalAlign: 'middle',
-                    borderWidth: 0
-                },
-                series: [
-                    {
-                        allowPointSelect: true,
-                        point: {
-                            events: {
-
-                            }
-                        },
-                        name: 'Tokyo',
-                        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-                    }, {
-                        name: 'New York',
-                        data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
-                    }, {
-                        name: 'Berlin',
-                        data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
-                    }, {
-                        name: 'London',
-                        data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-                    }
-                ]
+                chart: {
+			        type: 'bar'
+			    },
+			    title: {
+			        text: null
+			    },
+			    xAxis: {
+			        categories: ['Product 1', 'Product 2', 'Product 3']
+			    },
+			    yAxis: {
+			        min: 0,
+			        title: {
+			            text: ''
+			        }
+			    },
+			    legend: {
+			        enabled: false
+			    },
+			    
+			    plotOptions: {
+			        series: {
+			            stacking: 'normal',
+			            point: {
+			            events: {
+				            click: function(evt) {
+				            	$('#tooltip').remove();
+				            	openDialog(evt,this);
+				            },
+				            mouseOver: function(evt) {
+				            	console.log(evt);
+				            	evt.target.graphic.element.style.cursor = 'pointer';
+				            	evt.target.graphic.element.style.opacity = '.8';
+				            },
+				            mouseOut: function(evt) {
+				            	console.log(evt);
+				            	evt.target.graphic.element.style.cursor = 'default';
+				            	evt.target.graphic.element.style.opacity = '1';
+				            }
+				        }
+				       }             
+			        }
+			    },
+			    tooltip: {
+    				enabled: false,
+    				useHTML: true
+				},
+			    colors: [
+			    	'red', 'orange', 'green'
+			    ],
+			   series: [{
+			        name: 'Group 1 R',
+			        data: [5, 3, 4],
+			        stack: 'group 1'
+			    },
+			    {
+			        name: 'Group 1 A',
+			        data: [5, 3, 4],
+			        stack: 'group 1'
+			    }
+			    , 
+			    {
+			        name: 'Group 1 G',
+			        data: [3, 4, 4],
+			        stack: 'group 1'
+			    },
+			    {
+			        name: 'Group 2 R',
+			        data: [3, 4, 4],
+			        stack: 'group 2'
+			    }
+			    , {
+			        name: 'Group 2 A',
+			        data: [2, 5, 6],
+			        stack: 'group 2'
+			    }, {
+			        name: 'Group 2 G',
+			        data: [3, 1, 4],
+			        stack: 'group 2'
+			    }
+			    ]
             }
+                
         },
+        /**
         {
             chartComponent: TreeMapChart,
             title: "Fruit consumption",
@@ -175,7 +238,7 @@ var Treemap = require('highcharts/modules/treemap.src'),
                     text: ''
                 }
             }
-        }
+        }*/
     ];
 
 class App extends React.Component {
@@ -221,7 +284,7 @@ class App extends React.Component {
     };
 
     return chartObjects.map(function(item) {
-        return <Col md={12} lg={6} style={styles.chartCol}>
+        return <Col md={12} lg={12} style={styles.chartCol}>
             <item.chartComponent {...filterActions} title={item.title} options={item.options} container={item.container} style={styles.chart} modules={item.modules}>
             </item.chartComponent>
         </Col>;
