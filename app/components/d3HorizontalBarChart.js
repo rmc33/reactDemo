@@ -160,8 +160,8 @@ export default class D3HorizontalBarChart extends Component {
 		width = bodyWidth - margin.left - 40,
 		height = 250 - margin.top - margin.bottom,
 		xScale = d3.scaleLinear().rangeRound([0, width]),
-		yScale1 = d3.scaleBand().padding(.3),
-		yScale0 = d3.scaleBand().rangeRound([height, 0]),
+		yScale1 = d3.scaleBand().padding(.2),
+		yScale0 = d3.scaleBand().rangeRound([height, 0]).padding(.2),
 		xAxis = d3.axisBottom(xScale).tickFormat((d) => { return d; }).tickSizeInner([-height]),
 		yAxis =  d3.axisLeft(yScale0);
 		

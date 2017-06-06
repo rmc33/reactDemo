@@ -7,6 +7,7 @@ import jQuery from 'jquery';
 import sliderSass from './slider.less';
 import SearchTypeahead from './searchTypeahead';
 import D3Chart from './d3horizontalBarChart';
+import jqueryUiDialogCss from 'jquery-ui/themes/base/all.css';
 const $ = jQuery;
 
 

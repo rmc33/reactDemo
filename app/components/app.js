@@ -9,34 +9,34 @@ var plainMod = require("./plainMod");
 import appCss from '../css/app.css';
 import jQuery from 'jquery';
 const $ = jQuery;
+require('jquery-ui/ui/widgets/dialog');
 
-function openDialog(evt,series) {
+const Highcharts = require('highcharts');
+
+function openDialog(evt,point) {
 	    console.log('click evt=', evt, arguments);
         let clickedX = evt.pageX;
         let rect = $(evt.target);
-        let tooltip = $("<div>", {id: "tooltip", 
-        	"class": "popper",
-        	"x-placement": "bottom"
+        let message = $("<div>", {id: "messageDialog", 
+        	"class": "message",
         }).html(`<p class="bold">Product Group</p>
-			    Key:<span class="thin">Value</span>
-			    <div class="popper__arrow_outline"></div><div class="popper__arrow"></div>`)
-			.css("top", (rect.offset().top + rect.height()) + 'px');
-			
-		console.log('tooltip =', tooltip); 
+			    Key:<span class="thin">Value</span>`)
+		$(message).dialog({ 
+			dialogClass	: 'tooltip-dailog', 
+			title		: point.series.name,
+			position:   { my: "left +3 bottom-3", of: evt, collision: 'fit' },
+            closeText   : 'close',
+            width		: 'auto',
+			maxWidth	: 800,
+			height		: 'auto',
+			close		: function() { $('#message'+ point.x).remove(); }
+		});
 		
-		$('body').append(tooltip);
-			
-		 let width = tooltip.width() / 2;
-		 console.log(`width=${width},clickedX=${clickedX}`);
-		 tooltip.css('left', (clickedX - width - 10)+'px')
-		 	.addClass('shown')
-		 	.find('.popper__arrow')
-		 	.css({
-       	 		left: (width) + 'px' 
-       	 	});
 }
 
 var Treemap = require('highcharts/modules/treemap.src'),
+	
+	chart,
 	
 	styles = {
 		chart: {
@@ -66,7 +66,14 @@ var Treemap = require('highcharts/modules/treemap.src'),
             container: 'linecontainer',
             options: {
                 chart: {
-			        type: 'bar'
+			        type: 'bar',
+			        events: {
+                    	load: function(){
+                    		console.log('on load=', this, arguments);
+                    		chart = this;
+                        	this.myTooltip = new Highcharts.Tooltip(this, this.options.tooltip);                    
+                    	}
+                    }
 			    },
 			    title: {
 			        text: null
@@ -83,34 +90,40 @@ var Treemap = require('highcharts/modules/treemap.src'),
 			    legend: {
 			        enabled: false
 			    },
-			    
 			    plotOptions: {
 			        series: {
 			            stacking: 'normal',
 			            point: {
 			            events: {
 				            click: function(evt) {
-				            	$('#tooltip').remove();
+				            	//$('#tooltip').remove();
 				            	openDialog(evt,this);
+				            	console.log("on click =", evt);
+                            	chart.myTooltip.hide();
 				            },
 				            mouseOver: function(evt) {
 				            	console.log(evt);
 				            	evt.target.graphic.element.style.cursor = 'pointer';
 				            	evt.target.graphic.element.style.opacity = '.8';
+				            	chart.myTooltip.refresh(evt.point, evt);
 				            },
 				            mouseOut: function(evt) {
 				            	console.log(evt);
 				            	evt.target.graphic.element.style.cursor = 'default';
 				            	evt.target.graphic.element.style.opacity = '1';
+				            	chart.myTooltip.hide();
 				            }
 				        }
 				       }             
 			        }
 			    },
 			    tooltip: {
-    				enabled: false,
-    				useHTML: true
-				},
+                	useHtml: true,
+                	formatter: function() {
+        				return 'The value for <b>' + this.x + '</b> is <b>' + this.y + '</b>, in series '+ this.series.name;
+    				},
+                	enabled: false
+            	},
 			    colors: [
 			    	'red', 'orange', 'green'
 			    ],
