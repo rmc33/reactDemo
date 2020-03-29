@@ -1,5 +1,14 @@
 import React, { Component } from 'react';
-import * as d3 from "d3";
+var d3 = Object.assign({}, 
+	require('d3-selection'),
+	require('d3-scale'),
+	require('d3-axis'),
+	require('d3-array'),
+	require('d3-collection'),
+	require('d3-shape'),
+	require('d3-transition')
+);
+
 window.d3 = d3;//added for debugging
 import chartStyles from './d3horizontalBarChart.less';
 //import Popper from 'popper.js';
@@ -108,8 +117,9 @@ export default class D3HorizontalBarChart extends Component {
 			  .on('click', function(d, i) {
 				console.log('mouseover d=', d);
 				//if (lastHoveredIndex == i) return;
+				let coordinates= d3.mouse(this);
 				let yPos = $(this).offset().top +  yScale1.bandwidth();
-				let clickedX = d3.event.pageX;
+				let clickedX = coordinates[0];
 				if (!lastX) lastX = clickedX;
 				d3.select('#tooltip').remove();
 				$('.bar-rect').removeClass('active');
@@ -123,14 +133,14 @@ export default class D3HorizontalBarChart extends Component {
 					    <div class="popper__arrow_outline"></div><div class="popper__arrow"></div>`)
 					.style("top", yPos)
 				 let width = $(tooltip.node()).width() / 2;
-				 console.log(`width=${width},clickedX=${clickedX}`);
-				 $(tooltip.node()).css('left', (clickedX - width - 10)+'px')
+				 lastX = clickedX;
+				 console.log(`width=${width},clickedX=${lastX}`);
+				 $(tooltip.node()).css('left', lastX+'px')
 				 	.addClass('shown')
 				 	.find('.popper__arrow')
 				 	.css({
                	 		left: (width) + 'px' 
                	 	});
-               	 lastX = clickedX - width - 10;
 			  })
 			  .on('mouseover', function(d,i) {
 				//d3.select(this).style('stroke', color(i));
@@ -151,7 +161,6 @@ export default class D3HorizontalBarChart extends Component {
    }
    
    resize() {
-   	 
    	//get new height and width
 	let bodyWidth = d3.select('body').node().getBoundingClientRect().width - 20;
 	   let domEle = "stacked-bar",

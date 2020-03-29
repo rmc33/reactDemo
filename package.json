@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "",
-    "start": "webpack-dev-server --inline",
+    "start": "webpack-dev-server --inline --port 8070",
     "dev": "webpack -d --watch",
     "build": "webpack -p",
     "eslint": "eslint ."
   },
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "jquery-ui": "^1.12.1"
+  },
   "optionalDependencies": {
     "lodash": "^4.17.4"
   },
@@ -36,7 +38,7 @@
     "highcharts": "^5.0.6",
     "html-webpack-plugin": "^2.16.1",
     "isomorphic-fetch": "^2.2.1",
-    "jquery": "^3.1.1",
+    "jquery": "^3.4.1",
     "json-loader": "^0.5.4",
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
