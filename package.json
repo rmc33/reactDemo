@@ -15,7 +15,7 @@
     "jquery-ui": "^1.12.1"
   },
   "optionalDependencies": {
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
